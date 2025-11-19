@@ -8,7 +8,7 @@ on:
         required: false
         default: 'cookbook-dev'
         type: string
-      environment_file:  # Ignored! Just here for backwards compatibility
+      environment_file:  
         description: 'Name of conda environment file'
         required: false
         default: 'environment.yml'
@@ -26,7 +26,7 @@ on:
       build_command:
         description: 'The linux command to run the link checker for the book or site'
         required: false
-        default: 'jupyter-book build --builder linkcheck .'
+        default: 'myst build --check-links'
         type: string
 
 
@@ -41,15 +41,12 @@ jobs:
       run:
         shell: bash -l {0}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - name: Setup Miniforge
-        uses: conda-incubator/setup-miniconda@v3
+      - name: Setup environment with micromamba
+        uses: mamba-org/setup-micromamba@v2
         with:
-          miniforge-version: latest
-
-      - name: Install Jupyterbook
-        run: conda install -c conda-forge jupyter-book
+          environment-file: ${{ inputs.environment_file }}
 
       - name: Check for config file
         id: check_config
